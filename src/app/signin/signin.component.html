@@ -1,0 +1,89 @@
+<form [formGroup]="studentForm" (submit)="onSubmit()">
+
+<button type="button" (click)="fillTestValues()"> Remplissage de test</button>
+
+  <div class="row">
+    <div class="col s10 offset-s1">
+      <div class="card-panel">
+  
+        <!-- Champ nom -->
+        <div class="form-group">
+          <label for="name">Nom</label>
+          <input type="text" formControlName="name" id="name"
+                  required
+                  name="name"
+                  placeholder="Ex. Henry Cavill">
+        </div>
+
+        <!-- Champ numéro de téléphone -->
+        <div class="form-group">
+          <label for="phoneNumber">Numéro de téléphone</label>
+          <input type="number" formControlName="phoneNumber" id="phoneNumber"
+                required
+                name="phoneNumber"
+                placeholder="Ex. 648777048">
+        </div>
+  
+        <!-- Champ email -->
+        <div class="form-group">
+          <label for="hp">E-mail</label>
+          <input type="email" formControlName="email" id="email"
+                  required
+                  placeholder="Ex. henry.cavil@example.com">
+        </div>
+  
+        <!-- Champ adresse -->
+        <div class="form-group">
+          <label for="cp">Adresse</label>
+          <input type="text" formControlName="address" id="address"
+                  required
+                  placeholder="Ex. 2 rue de la république">
+        </div>
+  
+        <!-- Submit button -->
+        <div class="divider"></div>
+        <div class="section center">
+          <button type="submit"
+            class="waves-effect waves-light btn"
+            [disabled]="studentForm.invalid">
+            S'inscrire</button>
+        </div>
+  
+      </div>
+    </div>
+  </div>
+</form>
+
+
+<!--<form [formGroup]="studentForm" (ngSubmit)="onSubmit()" class="example-form">
+
+ <div>
+ <mat-form-field class="example-full-width">
+   <mat-label>Nom</mat-label>
+   <input matInput formControlName="name" placeholder="Ex. John Doe">
+ </mat-form-field>
+ </div>
+
+ <div>
+ <mat-form-field class="example-full-width center">
+   <mat-label>Numéro de téléphone</mat-label>
+   <input matInput formControlName="phoneNumber" placeholder="Ex. 612345678">
+ </mat-form-field>
+ </div>
+
+ <div>
+ <mat-form-field class="example-full-width">
+   <mat-label>E-mail</mat-label>
+   <input matInput formControlName="email" placeholder="Ex. prenom.nom@mail.com">
+ </mat-form-field>
+ </div>
+
+ <div>
+ <mat-form-field class="example-full-width">
+   <mat-label>Adresse</mat-label>
+   <input matInput formControlName="address" placeholder="Merci de renseigner votre adresse">
+ </mat-form-field>
+ </div>
+
+ <button type="submit">Inscription</button>
+</form>-->
