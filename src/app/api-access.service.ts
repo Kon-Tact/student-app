@@ -61,6 +61,17 @@ export class ApiAccessService {
     )
   }
 
+  editStudent(student: student): Observable<student> {
+    const editUrl = this.urlStudentApi + "/student/edit";
+    return this.http.put<student>(editUrl, student, {'headers': this.httpOptions}).pipe(
+      tap((student) => this.log(student)),
+      catchError((error) => {
+        console.error(error);
+        return of ();
+      })
+    ) 
+  }
+
   deleteStudent(student: student): Observable<null> {
     const delUrl = `${this.urlStudentApi}/student/delete?id=${student.id}`;
     return this.http.delete<null>(delUrl).pipe(
@@ -76,6 +87,7 @@ export class ApiAccessService {
   }
 
   private log(response: any) {
+    console.log("Notification de réussite du service ApiAccess :");
     console.table(response)
   }
 }

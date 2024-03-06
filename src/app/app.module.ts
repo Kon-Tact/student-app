@@ -10,18 +10,22 @@ import { TableComponent } from './table/table.component';
 import { MatTableModule } from '@angular/material/table';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SigninComponent } from './signin/signin.component';
+import { MatButtonModule } from '@angular/material/button';
+import { RegisterConnexionComponent } from './register-connexion/register-connexion.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     TableComponent,
-    SigninComponent
+    SigninComponent,
+    RegisterConnexionComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     MatTableModule,
+    MatButtonModule,
     ReactiveFormsModule,
     FormsModule,
   ],

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { student } from './student';
 
 @Injectable({
   providedIn: 'root'
@@ -11,11 +12,11 @@ export class DataAccessService {
   private jsonLastName = './assets/lastnames.json';
   private jsonFirstName = './assets/firstnames.json';
   private jsonRue = './assets/rue.json';
+  private savedStudent: student;
+  private isStudentStocked = false;
 
   getRandoData(dataType: String): Observable<string> {
     return new Observable(observer => {
-      
-      console.log("in get rando");
       
       let path: RequestInfo = '';
 
@@ -58,4 +59,18 @@ export class DataAccessService {
         .catch(error => observer.error(error));
     })
   }
+
+  saveToUpdate(student: student) : boolean {
+    this.savedStudent = student;
+    this.isStudentStocked = true;
+    return true;
+  }
+
+  giveToUpdate() : student | null {
+    if (this.isStudentStocked == true) {
+      this.isStudentStocked = false;
+      return this.savedStudent;
+    }
+    return null;
+  } 
 }

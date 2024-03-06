@@ -26,10 +26,13 @@
     </ng-container>
 
     <ng-container matColumnDef="delete">
-        <th mat-header-cell *matHeaderCellDef> Supprimer de la base</th>
+        <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let element">
             <button mat-icon-button color="warn" (click)="deleteStudent(element)">
                 X
+            </button>
+            <button mat-icon-button color="primary" (click)="goToEdit(element)">
+                E
             </button>
         </td>
     </ng-container>
