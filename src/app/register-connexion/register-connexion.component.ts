@@ -46,7 +46,6 @@ export class RegisterConnexionComponent implements OnInit{
   onSubmit() {
     const newAccount = this.accountForm.value
     this.api.saveAccount(newAccount).subscribe((account) => {
-      console.log("Le compte a bien été enregistré sur la base :" + account);
       this.notif.showSuccess("Le compte a bien été enregistré dans la base");
       this.dataServ.accountForSession(newAccount);
       this.goto.goToHomePage();  

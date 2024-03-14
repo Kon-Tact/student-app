@@ -16,6 +16,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { EditProfilComponent } from './edit-profil/edit-profil.component';
 import { LoginPageComponent } from './login-page/login-page.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { DialogComponent } from './table/dialog.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +26,8 @@ import { LoginPageComponent } from './login-page/login-page.component';
     SigninComponent,
     RegisterConnexionComponent,
     EditProfilComponent,
-    LoginPageComponent
+    LoginPageComponent,
+    DialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -32,6 +35,7 @@ import { LoginPageComponent } from './login-page/login-page.component';
     HttpClientModule,
     MatTableModule,
     MatFormFieldModule,
+    MatDialogModule,
     MatButtonModule,
     MatSnackBarModule,
     ReactiveFormsModule,
