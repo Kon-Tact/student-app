@@ -12,20 +12,28 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SigninComponent } from './signin/signin.component';
 import { MatButtonModule } from '@angular/material/button';
 import { RegisterConnexionComponent } from './register-connexion/register-connexion.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { EditProfilComponent } from './edit-profil/edit-profil.component';
+import { LoginPageComponent } from './login-page/login-page.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     TableComponent,
     SigninComponent,
-    RegisterConnexionComponent
+    RegisterConnexionComponent,
+    EditProfilComponent,
+    LoginPageComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     MatTableModule,
+    MatFormFieldModule,
     MatButtonModule,
+    MatSnackBarModule,
     ReactiveFormsModule,
     FormsModule,
   ],

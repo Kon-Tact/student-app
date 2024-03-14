@@ -8,7 +8,9 @@ import { DataAccessService } from '../data-access.service';
 @Component({
   selector: 'app-table',
   templateUrl: './table.component.html',
-  styles: ``
+  styles: `button {
+    margin: auto 4px
+  }`
 })
 export class TableComponent implements OnInit {
     modify: boolean = false;
@@ -33,13 +35,16 @@ export class TableComponent implements OnInit {
   }
 
   deleteStudent(student: student) {
-    console.log(student.id);
+    if(window.confirm('Êtes vous sûr(e) de vouloir supprimer l\'étudiant(e) ' + student.name + ' de la base de donnée ? \nCette action est définitive.')) {
+      console.log(student.id);
     
-    this.api.deleteStudent(student)
-    .subscribe(() => { 
+      this.api.deleteStudent(student)
+      .subscribe(() => { 
       this.studentList = this.studentList.filter(s => s.id !== student.id);
       this.ngOnInit();
-    })
+      })
+    }
+    
   }
 
   goToEdit(student: student) {
@@ -49,5 +54,5 @@ export class TableComponent implements OnInit {
     this.router.navigateByUrl('/signin');
   }
 
-  displayedColumns: String[] = ['id', 'name', 'phoneNumber', 'email', 'address', 'delete'];
+  displayedColumns: String[] = ['name', 'phoneNumber', 'email', 'address', 'delete'];
 }

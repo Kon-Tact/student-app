@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { student } from './student';
+import { account } from './account';
 
 @Injectable({
   providedIn: 'root'
@@ -9,11 +10,14 @@ export class DataAccessService {
 
   constructor() { }
 
+  private json_url: RequestInfo = './assets/firstnames.json';
   private jsonLastName = './assets/lastnames.json';
   private jsonFirstName = './assets/firstnames.json';
   private jsonRue = './assets/rue.json';
   private savedStudent: student;
   private isStudentStocked = false;
+  private register = false;
+  private actualAccount: account | null;
 
   getRandoData(dataType: String): Observable<string> {
     return new Observable(observer => {
@@ -40,13 +44,13 @@ export class DataAccessService {
 
           switch (dataType) {
             case 'lastname':
-              list = data.lastname as string[];
+              list = data.lastnames as string[];
               break
             case 'firstname':
               list = data.firstnames as string[];
               break
             case 'rue':
-              list = data.streetNames as string[];
+              list = data.streetnames as string[];
               break
           }
 
@@ -60,6 +64,37 @@ export class DataAccessService {
     })
   }
 
+  getRandoDatas(): Observable<student> {
+    return new Observable<student>(observer => {
+
+      fetch(this.json_url)
+        .then(response => response.json())
+        .then(data => {
+
+          let fnList: string[] = data.firstnames;
+          let lnList: string[] = data.lastnames;
+          let snList: string[] = data.streetnames;
+
+          console.table(fnList);
+
+          let randoStud = student.empty(); 
+          
+          randoStud.name = this.listRand(lnList) + " " + this.listRand(fnList);
+          randoStud.address = this.listRand(snList);
+
+          observer.next(randoStud);
+          observer.complete();
+        })
+        .catch(error => observer.error(error));
+    })
+  }
+
+  listRand(list: string[]): string {
+    const randIndex = Math.floor(Math.random() * list.length);
+    const randElement = list[randIndex];
+    return randElement;
+  } 
+
   saveToUpdate(student: student) : boolean {
     this.savedStudent = student;
     this.isStudentStocked = true;
@@ -72,5 +107,19 @@ export class DataAccessService {
       return this.savedStudent;
     }
     return null;
-  } 
+  }
+
+  accountForSession(account: account) {
+    this.actualAccount = account;
+    console.log(this.actualAccount);
+    
+  }
+
+  connectedAccount(): account | null{
+
+    console.log(this.actualAccount);
+    
+    return this.actualAccount;
+  }
+
 }

@@ -1,6 +1,6 @@
-<h1 class=" center">Création d'un nouveau compte</h1>
+<h1 class=" center">Mise à jour du profil</h1>
 
-<form [formGroup]="accountForm" (submit)="onSubmit()">
+<form [formGroup]="editAccountForm" (submit)="onSubmit()">
   <div class="row">
     <div class="col s10 offset-s1">
       <div class="card-panel">
@@ -28,7 +28,6 @@
           <label for="hp">E-mail</label>
           <input type="email" formControlName="email" id="email"
                   required
-                  name="email"
                   placeholder="Ex. henry.cavil@example.com">
         </div>
   
@@ -45,8 +44,8 @@
           <button 
             type="submit"
             class="waves-effect waves-light btn"
-            [disabled]="accountForm.invalid">
-            S'enregistrer
+            [disabled]="editAccountForm.invalid">
+            Mettre a jour le compte
           </button>
         </div>
       </div>

@@ -1,39 +1,44 @@
-import { Component, Input, OnInit, input } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
 import { ApiAccessService } from '../api-access.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DataAccessService } from '../data-access.service';
 import { student } from '../student';
+import { NotificationsService } from '../notifications.service';
+import { GotoService } from '../goto.service';
 
 @Component({
   selector: 'app-signin',
   templateUrl: './signin.component.html',
-  styles: ``
+  styles: `button {
+    margin: auto 1%;
+  }`
 })
+
 export class SigninComponent implements OnInit{
 
   studentForm: FormGroup;
   toUpdateStudent : student | null;
-  toUpdateStudentId : number;
-  updatedStudent : student;
+  btnText: string;
 
   constructor(
-    private router: Router,
     private api: ApiAccessService,
     private fb: FormBuilder,
-    private dataServ : DataAccessService
+    private goto: GotoService,
+    private dataServ : DataAccessService,
+    private notif: NotificationsService
   ) {}
 
   ngOnInit(): void {
 
-    this.initForm();
+    this.init();
 
-    this.toUpdateStudent = this.dataServ.giveToUpdate();
+    //this.fillForms(student.empty());
+    //this.toUpdateStudent = this.dataServ.giveToUpdate();
 
-
-    if (this.toUpdateStudent != null) {
+    /* if (this.toUpdateStudent != null) {
 
       this.toUpdateStudentId = this.toUpdateStudent.id;
+      this.btnText = "Mise à jour"
 
       console.log("Vérification des valeurs de l'étudiant a modifier")
       console.table(this.toUpdateStudent);
@@ -43,62 +48,78 @@ export class SigninComponent implements OnInit{
         phoneNumber: this.toUpdateStudent.phoneNumber,
         email: this.toUpdateStudent.email,
         address: this.toUpdateStudent.address,
-      })
+      });
+
 
       this.studentForm.updateValueAndValidity();
     } else {
-      console.log("Il s'agit d'un ajout et non d'une modification");
-      
+      console.log("Il s'agit d'un ajout et non d'une modification");  
+      this.btnText = "S'inscrire"
+    } */
+  }
+
+  init() {
+
+    this.toUpdateStudent = this.dataServ.giveToUpdate();
+    console.table(this.toUpdateStudent);
+
+    if(this.toUpdateStudent) {
+      this.btnText = 'Mise à jour';
+      this.fillForms(this.toUpdateStudent);
+    } else {
+      this.btnText = 'Enregistrer';
+      this.fillForms(student.empty());
     }
   }
 
-
-  initForm() {
+  fillForms(student: student) {
     this.studentForm = this.fb.group({
-      name: [''],
-      phoneNumber: [''],
-      email: [''],
-      address: [''],
+      name: [student.name],
+      phoneNumber: [student.phoneNumber],
+      email: [student.email],
+      address: [student.address]
     });
+
+    this.studentForm.updateValueAndValidity();
   }
 
   onSubmit() {
-    if(this.studentForm.valid) {
 
-      if(this.toUpdateStudent == null) {
-        const newStudent = this.studentForm.value;
-        this.api.saveStudent(newStudent).subscribe((student) => {
-        console.log('L\'étudiant a bien été enregistré sue la base : ', student);
-        this.studentForm.reset();
-        this.ngOnInit();
-        })
+    if(!this.toUpdateStudent) {
+        //const account = this.studentForm.value;
+        //this.api.saveStudent(account).subscribe((student) => {
+        this.api.saveStudent(this.studentForm.value).subscribe((student) => {
+        //console.log('L\'étudiant a bien été enregistré sue la base : ', student);
+        this.notif.showSuccess('L\'étudiant(e) a bien été enregistré sur la base de donnée');
+        this.goto.goToHomePage();
+      })
 
-
-      } else {
-        this.updatedStudent = this.studentForm.value;
-        this.updatedStudent.id = this.toUpdateStudentId;
-        console.table(this.updatedStudent);
-        this.api.editStudent(this.updatedStudent).subscribe((student) => {
+    } else {
+      //this.updatedStudent = this.studentForm.value;
+      //this.updatedStudent.id = this.toUpdateStudentId;
+      const account = this.studentForm.value;
+      account.id = this.toUpdateStudent.id;
+      console.log(account);
+      //console.table(this.toUpdateStudent);
+      this.api.editStudent(account).subscribe((student) => {
         console.log('L\'étudiant a bien été mis à jour dans la base : ', student);
-        this.router.navigateByUrl('/students');
-        })
-      }
-      
+        this.notif.showSuccess('L\'étudiant a bien été mis à jour dans la base');
+        /* const values = this.checkChange();
+        if(values) {
+          this.notif.showSuccess('L\'étudiant ' + this.updatedStudent.name + ' a bien été mis à jour dans la base\n');
+        } else {
+          this.notif.showSuccess('Aucune modifications n\'ont étées apportées sur l\'étudiant ' + this.updatedStudent.name);
+        } */
+        this.goto.goToHomePage();
+      })
     }
-  } 
+  }
 
   fillTestValues() {
     
     let randoName: string = "";
     let randoPN: string = ("6" + Math.floor(Math.random() * 100000000));
-    if (randoPN.length != 9) {
-      console.log("Numéro a 8 chiffre : " + randoPN);
-      
-      randoPN = randoPN + Math.floor(Math.random() * 10);
-
-      console.log("Passé en numéro à 9 chiffre : " + randoPN);
-      
-    }
+    if (randoPN.length != 9) { randoPN = randoPN + Math.floor(Math.random() * 10); }
     let randoMail: string = "";
     let randoAdresse: string =  String(Math.floor(Math.random() * 30) + 1);
   
@@ -126,13 +147,22 @@ export class SigninComponent implements OnInit{
         })    
       })
     })
-    
-    this.studentForm.patchValue({
-      name: randoName,
-      phoneNumber: randoPN,
-      email: randoMail,
-      address: randoAdresse,
+  }
+
+  generateTestValue() {
+    let randoPN: string = ("06" + Math.floor(Math.random() * 10000000));
+    if (randoPN.length != 10) { randoPN = randoPN + Math.floor(Math.random() * 10); }
+    this.dataServ.getRandoDatas().subscribe(student => {
+      let randStud = student;
+      randStud.email = randStud.name.toLowerCase().replace(/\s/g, '') + "@email.com";
+      randStud.phoneNumber = randoPN
+      randStud.address = String(Math.floor(Math.random() * 30) + 1) + " " + randStud.address;
+      console.table(randStud);
+      this.fillForms(randStud);  
     })
   }
 
+  backToList() {
+    this.goto.goToHomePage();
+  }
 }

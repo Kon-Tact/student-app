@@ -2,12 +2,15 @@
   <div class="nav-wrapper blue">
     <a href="#" class="brand-logo center">Plateforme d'inscription étudiante</a>
     <ul id="nav-mobile" class="left hide-on-med-and-down">
-      <li><a (click)="goToSignIn()" >Inscription d'un étudiant</a></li>
+      <li><a (click)="studentRegistration()" >Inscription d'un étudiant</a></li>
       <li><a (click)="clearBase()">Vider la base</a></li>
     </ul>
-    <ul id="nav-mobile" class="right hide-on-med-and-down">
-      <li><a>Se connecter</a></li>
-      <li><a>S'inscrire sur la base</a></li>
+    <ul *ngIf="!connectedAccount" id="nav-mobile" class="right hide-on-med-and-down">
+      <li><a (click)="login()">Se connecter</a></li>
+      <li><a (click)="register()">S'inscrire sur la base</a></li>
+    </ul>
+    <ul *ngIf="connectedAccount" id="nav-mobile" class="right hide-on-med-and-down">
+      <li><a>{{connectedAccount.username}}</a></li>
     </ul>
   </div>
 </nav>

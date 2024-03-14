@@ -1,13 +1,13 @@
 export class student {
     id!: number;
     name: string;
-    phoneNumber: number;
+    phoneNumber: string;
     email: string;
     address: string;
 
     constructor(
         name:string = 'Nom et prénom',
-        phoneNumber: number = 123456789,
+        phoneNumber: string = '0123456789',
         email: string = 'exemple@mail.fr',
         address: string = 'Entrez l\'adresse'
     )
@@ -16,5 +16,9 @@ export class student {
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.address = address;
+    }
+
+    static empty(): student {
+        return new student('', '', '', '');
     }
 }

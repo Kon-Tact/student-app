@@ -1,7 +1,5 @@
 <form [formGroup]="studentForm" (submit)="onSubmit()">
 
-<button type="button" (click)="fillTestValues()"> Remplissage de test</button>
-
   <div class="row">
     <div class="col s10 offset-s1">
       <div class="card-panel">
@@ -40,15 +38,30 @@
                   placeholder="Ex. 2 rue de la république">
         </div>
   
-        <!-- Submit button -->
+        <!-- Buttons -->
         <div class="divider"></div>
         <div class="section center">
-          <button type="submit"
+          
+          <button 
+            type="button"
+            (click)="backToList()"
+            class="waves-effect waves-light btn">
+            Retour
+          </button>
+          <button 
+            type="submit"
             class="waves-effect waves-light btn"
             [disabled]="studentForm.invalid">
-            S'inscrire</button>
+            {{btnText}}
+          </button>
+
+          <button 
+            type="button" 
+            (click)="generateTestValue()"
+            class="waves-effect waves-light btn"> 
+            Remplissage de test
+          </button>
         </div>
-  
       </div>
     </div>
   </div>
