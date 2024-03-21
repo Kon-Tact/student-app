@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { account } from '../account';
 import { NotificationsService } from '../notifications.service';
 import { GotoService } from '../goto.service';
+import { ConnectionService } from '../connection.service';
 
 @Component({
   selector: 'app-register-connexion',
@@ -21,7 +22,7 @@ export class RegisterConnexionComponent implements OnInit{
 
   constructor (
     private fb: FormBuilder,
-    private dataServ: DataAccessService,
+    private connect: ConnectionService,
     private api: ApiAccessService,
     private goto: GotoService,
     private notif: NotificationsService
@@ -47,7 +48,7 @@ export class RegisterConnexionComponent implements OnInit{
     const newAccount = this.accountForm.value
     this.api.saveAccount(newAccount).subscribe((account) => {
       this.notif.showSuccess("Le compte a bien été enregistré dans la base");
-      this.dataServ.accountForSession(newAccount);
+      this.connect.connectAccount(newAccount);
       this.goto.goToHomePage();  
     })
   }  

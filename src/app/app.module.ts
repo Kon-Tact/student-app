@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { ApiAccessService } from './api-access.service';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { TableComponent } from './table/table.component';
@@ -18,6 +18,7 @@ import { EditProfilComponent } from './edit-profil/edit-profil.component';
 import { LoginPageComponent } from './login-page/login-page.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { DialogComponent } from './table/dialog.component';
+import { TokenManagementService } from './token-management.service';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { DialogComponent } from './table/dialog.component';
     EditProfilComponent,
     LoginPageComponent,
     DialogComponent,
+    
   ],
   imports: [
     BrowserModule,
@@ -41,7 +43,11 @@ import { DialogComponent } from './table/dialog.component';
     ReactiveFormsModule,
     FormsModule,
   ],
-  providers: [ApiAccessService, provideAnimationsAsync()],
+  providers: [
+    ApiAccessService,
+    provideAnimationsAsync(),
+    {provide: HTTP_INTERCEPTORS, useClass: TokenManagementService, multi: true}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

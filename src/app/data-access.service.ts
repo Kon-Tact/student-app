@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { student } from './student';
-import { account } from './account';
+import { diagMessages } from './dialogCases';
 
 @Injectable({
   providedIn: 'root'
@@ -16,8 +16,6 @@ export class DataAccessService {
   private jsonRue = './assets/rue.json';
   private savedStudent: student;
   private isStudentStocked = false;
-  private register = false;
-  private actualAccount: account | null;
 
   getRandoData(dataType: String): Observable<string> {
     return new Observable(observer => {
@@ -109,17 +107,38 @@ export class DataAccessService {
     return null;
   }
 
-  accountForSession(account: account) {
-    this.actualAccount = account;
-    console.log(this.actualAccount);
-    
+  dialogMessage(cases: diagMessages): String{
+    switch (cases) {
+      case diagMessages.DELETE : {
+        return "La suppression est définitive";
+      } 
+      case diagMessages.EDIT_STUDENT : {
+        return "Voulez entrer dans la modification";
+      }
+      case diagMessages.LOGOUT : {
+        return "Cette action va vous déconnecter"
+      }
+      default : {
+        return "";
+      }
+    }
   }
 
-  connectedAccount(): account | null{
-
-    console.log(this.actualAccount);
-    
-    return this.actualAccount;
+  dialogTitle(cases: diagMessages): String {
+    switch (cases) {
+      case diagMessages.DELETE : {
+        return "Suppression";
+      } 
+      case diagMessages.EDIT_STUDENT : {
+        return "Edition";
+      }
+      case diagMessages.LOGOUT : {
+        return "Deconnexion";
+      }
+      default : {
+        return "";
+      }
+    }
   }
 
 }

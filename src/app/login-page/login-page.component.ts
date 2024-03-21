@@ -5,6 +5,7 @@ import { GotoService } from '../goto.service';
 import { NotificationsService } from '../notifications.service';
 import { account } from '../account';
 import { DataAccessService } from '../data-access.service';
+import { ConnectionService } from '../connection.service';
 
 @Component({
   selector: 'app-login-page',
@@ -19,7 +20,7 @@ export class LoginPageComponent implements OnInit{
     private api: ApiAccessService,
     private goto: GotoService,
     private notif: NotificationsService,
-    private dataServ: DataAccessService
+    private connect: ConnectionService
   ) {}
 
   ngOnInit(): void {
@@ -34,14 +35,22 @@ export class LoginPageComponent implements OnInit{
   }
 
   login() {
-    const loggingAccount: account = this.loginForm.value;
-    this.api.login(loggingAccount).subscribe((account) => {
+    let loggingAccount: account = this.loginForm.value;
+    this.api.login(loggingAccount).subscribe((json) => {
       console.log('Authentification réussie sous le compte ' + loggingAccount.username);
+      const tokenValue: string = json.token;
+      this.api.setAuthToken(tokenValue);
+      console.log(tokenValue);
+      console.log(json.id);
+      loggingAccount.id = json.id;
+      console.log(json.role);
+      loggingAccount.role = json.role;
+      console.log(json.email);
+      loggingAccount.email = json.email; 
+      console.table(loggingAccount);
+      this.connect.connectAccount(loggingAccount);
+      this.goto.goToHomePage();
       this.notif.showSuccess('Authentification réussie sous le compte ' + loggingAccount.username);
-      this.loginForm.reset();
-      this.dataServ.accountForSession(loggingAccount);
-      location.reload();
-      this.goto.goToHomePage(); 
     })
   }
 }

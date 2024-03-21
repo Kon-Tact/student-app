@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
 import { ApiAccessService } from '../api-access.service';
-import { DataAccessService } from '../data-access.service';
 import { NotificationsService } from '../notifications.service';
 import { GotoService } from '../goto.service';
+import { ConnectionService } from '../connection.service';
 
 @Component({
   selector: 'app-edit-profil',
@@ -22,12 +21,12 @@ export class EditProfilComponent implements OnInit{
     private fb: FormBuilder,
     private goto: GotoService,
     private api: ApiAccessService,
-    private dataServ: DataAccessService,
+    private connect: ConnectionService,
     private notif: NotificationsService
   ) {}
 
   ngOnInit(): void {
-    const connectedAccount = this.dataServ.connectedAccount();
+    const connectedAccount = this.connect.retrieveAccount();
     this.initForm();
 
     this.editAccountForm.patchValue({
@@ -51,10 +50,11 @@ export class EditProfilComponent implements OnInit{
 
   onSubmit() {
     const newAccount = this.editAccountForm.value;
+    newAccount.id = localStorage.getItem("id");
     this.api.editAccount(newAccount).subscribe((account) => {
       console.log("Le compte a bien été mis à jour dans la base : " + account);
       this.notif.showSuccess("Votre profil a bien été mis à jour dans la base");
-      this.dataServ.accountForSession(newAccount);
+      this.connect.connectAccount(newAccount);
       this.goto.goToHomePage();
     })
   }

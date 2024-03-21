@@ -1,16 +1,17 @@
 <nav>
   <div class="nav-wrapper blue">
-    <a href="#" class="brand-logo center">Plateforme d'inscription étudiante</a>
+    <a (click)="toList()" class="brand-logo center">Plateforme d'inscription étudiante</a>
     <ul id="nav-mobile" class="left hide-on-med-and-down">
       <li><a (click)="studentRegistration()" >Inscription d'un étudiant</a></li>
-      <li><a (click)="clearBase()">Vider la base</a></li>
+      <li *ngIf="isAdmin"><a (click)="clearBase()">Vider la base</a></li>
     </ul>
     <ul *ngIf="!connectedAccount" id="nav-mobile" class="right hide-on-med-and-down">
       <li><a (click)="login()">Se connecter</a></li>
       <li><a (click)="register()">S'inscrire sur la base</a></li>
     </ul>
     <ul *ngIf="connectedAccount" id="nav-mobile" class="right hide-on-med-and-down">
-      <li><a>{{connectedAccount.username}}</a></li>
+      <li><a (click)="edit()"><i class="right material-icons">account_circle</i>{{connectedAccount.username}}</a></li>
+      <li><a (click)="openDialog('150ms', '150ms', diagMessages.LOGOUT)">Se déconnecter</a></li>
     </ul>
   </div>
 </nav>

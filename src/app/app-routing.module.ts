@@ -1,22 +1,35 @@
-import { NgModule } from '@angular/core';
+import { NgModule, inject } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SigninComponent } from './signin/signin.component';
 import { TableComponent } from './table/table.component';
 import { RegisterConnexionComponent } from './register-connexion/register-connexion.component';
 import { LoginPageComponent } from './login-page/login-page.component';
 import { EditProfilComponent } from './edit-profil/edit-profil.component';
+import { ConnectionService } from './connection.service';
+import { createAuthGuard } from './auth.guard';
+import { GotoService } from './goto.service';
 
 const routes: Routes = [
   {path: 'register', component: RegisterConnexionComponent},
+  {path: 'students', component: TableComponent, canActivate: ['AuthGuard']},
   {path: 'login', component: LoginPageComponent},
-  {path: 'edit', component: EditProfilComponent},
-  {path: 'signin', component: SigninComponent},
-  {path: 'students', component: TableComponent},
-  {path: '', redirectTo: 'students', pathMatch: 'full'}
+  {path: 'edit', component: EditProfilComponent, canActivate: ['AuthGuard']},
+  {path: 'signin', component: SigninComponent, canActivate: ['AuthGuard']},
+  
+  {path: '', redirectTo: 'login', pathMatch: 'full'}
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
+  providers: [
+    ConnectionService,
+    {
+      provide: 'AuthGuard',
+      useFactory: (connectServ: ConnectionService, goto: GotoService) => createAuthGuard(connectServ, goto),
+      deps:[ConnectionService, GotoService]
+    }
+    
+  ]
 })
 export class AppRoutingModule { }
