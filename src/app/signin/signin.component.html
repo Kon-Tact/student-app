@@ -7,7 +7,9 @@
         <!-- Champ nom -->
         <div class="form-group">
           <label for="name">Nom</label>
+          <a *ngIf="validator.visibleDefaultName" (click)="backToSnap('name')"><i class="waves-effect right material-icons">autorenew</i></a>
           <input type="text" formControlName="name" id="name"
+                  (ngModelChange)="checkDifferences($event, 'name')"
                   required
                   name="name"
                   placeholder="Ex. Henry Cavill">
@@ -16,7 +18,9 @@
         <!-- Champ numéro de téléphone -->
         <div class="form-group">
           <label for="phoneNumber">Numéro de téléphone</label>
-          <input type="number" formControlName="phoneNumber" id="phoneNumber"
+          <a *ngIf="validator.visibleDefaultPhonenumber" (click)="backToSnap('phoneNumber')"><i class="waves-effect right material-icons">autorenew</i></a>
+          <input type="text" formControlName="phoneNumber" id="phoneNumber"
+                (ngModelChange)="checkDifferences($event, 'phoneNumber')"
                 required
                 name="phoneNumber"
                 placeholder="Ex. 648777048">
@@ -25,16 +29,22 @@
         <!-- Champ email -->
         <div class="form-group">
           <label for="hp">E-mail</label>
+          <a *ngIf="validator.visibleDefaultEmail" (click)="backToSnap('email')"><i class="waves-effect right material-icons">autorenew</i></a>
           <input type="email" formControlName="email" id="email"
+                  (ngModelChange)="checkDifferences($event, 'email')"
                   required
+                  name="email"
                   placeholder="Ex. henry.cavil@example.com">
         </div>
   
         <!-- Champ adresse -->
         <div class="form-group">
           <label for="cp">Adresse</label>
+          <a *ngIf="validator.visibleDefaultEmail" (click)="backToSnap('address')"><i class="waves-effect right material-icons">autorenew</i></a>
           <input type="text" formControlName="address" id="address"
+                  (ngModelChange)="checkDifferences($event, 'address')"
                   required
+                  name="address"
                   placeholder="Ex. 2 rue de la république">
         </div>
   
@@ -51,7 +61,7 @@
           <button 
             type="submit"
             class="waves-effect waves-light btn"
-            [disabled]="studentForm.invalid">
+            [disabled]="!validator.buttonState">
             {{btnText}}
           </button>
 

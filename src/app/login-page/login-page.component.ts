@@ -4,7 +4,6 @@ import { ApiAccessService } from '../api-access.service';
 import { GotoService } from '../goto.service';
 import { NotificationsService } from '../notifications.service';
 import { account } from '../account';
-import { DataAccessService } from '../data-access.service';
 import { ConnectionService } from '../connection.service';
 
 @Component({
@@ -12,7 +11,9 @@ import { ConnectionService } from '../connection.service';
   templateUrl: './login-page.component.html',
   styles: ``
 })
+
 export class LoginPageComponent implements OnInit{
+
   loginForm: FormGroup;
 
   constructor(
@@ -36,21 +37,20 @@ export class LoginPageComponent implements OnInit{
 
   login() {
     let loggingAccount: account = this.loginForm.value;
-    this.api.login(loggingAccount).subscribe((json) => {
-      console.log('Authentification réussie sous le compte ' + loggingAccount.username);
-      const tokenValue: string = json.token;
-      this.api.setAuthToken(tokenValue);
-      console.log(tokenValue);
-      console.log(json.id);
-      loggingAccount.id = json.id;
-      console.log(json.role);
-      loggingAccount.role = json.role;
-      console.log(json.email);
-      loggingAccount.email = json.email; 
-      console.table(loggingAccount);
-      this.connect.connectAccount(loggingAccount);
-      this.goto.goToHomePage();
-      this.notif.showSuccess('Authentification réussie sous le compte ' + loggingAccount.username);
-    })
+    this.api.login(loggingAccount).subscribe({
+      next: (response) => {
+        this.api.setAuthToken(response.token);
+        loggingAccount = response.account;
+        this.connect.connectAccount(loggingAccount);
+        if(loggingAccount.role === "SUPER_ADMIN" && loggingAccount.password === "admin") {
+          this.connect.editConnected();
+          this.goto.goToEdit();
+          this.notif.showSuccess('Le compte super admin n\' est pas sécurisé. \n Un changement de mot de passe est recommandé');
+        } else {
+          this.goto.goToHomePage();
+          this.notif.showSuccess('Authentification réussie sous le compte ' + loggingAccount.username);
+        }   
+      }
+    });
   }
 }

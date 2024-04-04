@@ -34,14 +34,19 @@ export class TableComponent implements OnInit {
   ngOnInit(): void {
     this.api.getStudentList().subscribe((student) => {
       this.studentList = student;
-      this.dataSource = new MatTableDataSource<student>(this.studentList);
+      this.initTable();
     }) 
-    this.isAdmin = this.connect.isAdmin();  
-    this.isAdmin? this.displayedColumns = ['name', 'phoneNumber', 'email', 'address', 'delete'] : this.displayedColumns = ['name', 'phoneNumber', 'email', 'address'];
+    this.isAdmin = this.connect.isAdmin();
+    this.isAdmin ? this.displayedColumns = ['name', 'phoneNumber', 'email', 'address', 'delete'] : this.displayedColumns = ['name', 'phoneNumber', 'email', 'address'];
+    this.dataServ.removeLocalExceptConnected();
   }
 
   public get diagMessages() {
     return diagMessages;
+  }
+
+  initTable() {
+    this.dataSource = new MatTableDataSource<student>(this.studentList);
   }
 
   openDialog(enterAnimationDuration: string, exitAnimationDuration: string, student: student, cases: diagMessages) {
@@ -53,19 +58,20 @@ export class TableComponent implements OnInit {
     })
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result && diagMessages.DELETE) {
+      if (result && cases == diagMessages.DELETE) {
         this.api.deleteStudent(student).subscribe(() => { 
           this.studentList = this.studentList.filter(s => s.id !== student.id);
-          this.ngOnInit();
+          this.initTable();
         });
-      } else if (result && diagMessages.EDIT_STUDENT) {
+      } else if (result && cases == diagMessages.EDIT_STUDENT) {
+        this.dataServ.saveStudentToUpdate(student);
         this.goToEdit(student);
       }
     });
   }
 
   goToEdit(student: student) {
-    this.dataServ.saveToUpdate(student);
+    this.dataServ.saveStudentToUpdate(student);
     this.goto.goToStudentRegistration();
   }
 }

@@ -2,16 +2,17 @@
   <div class="nav-wrapper blue">
     <a (click)="toList()" class="brand-logo center">Plateforme d'inscription étudiante</a>
     <ul id="nav-mobile" class="left hide-on-med-and-down">
-      <li><a (click)="studentRegistration()" >Inscription d'un étudiant</a></li>
-      <li *ngIf="isAdmin"><a (click)="clearBase()">Vider la base</a></li>
+      <li><a (click)="studentRegistration()"><i class="right material-icons">add_box</i>Inscrire un étudiant</a></li>
+      <li *ngIf="clearPossible()"><a (click)="openDialog('150ms', '150ms', diagMessages.CLEAR)"><i class="right material-icons">delete_sweep</i>Nettoyer la base</a></li>
     </ul>
     <ul *ngIf="!connectedAccount" id="nav-mobile" class="right hide-on-med-and-down">
-      <li><a (click)="login()">Se connecter</a></li>
-      <li><a (click)="register()">S'inscrire sur la base</a></li>
+      <li><a (click)="login()"><i class="right material-icons">input</i>Se connecter</a></li>
+      <li><a (click)="register()"><i class="right material-icons">person_add</i>S'inscrire sur la base</a></li>
     </ul>
     <ul *ngIf="connectedAccount" id="nav-mobile" class="right hide-on-med-and-down">
+      <li *ngIf="connectedAccount.role.includes('ADMIN')" (click)="toAccounts()"><a><i class="right material-icons">list</i>Comptes</a></li>
       <li><a (click)="edit()"><i class="right material-icons">account_circle</i>{{connectedAccount.username}}</a></li>
-      <li><a (click)="openDialog('150ms', '150ms', diagMessages.LOGOUT)">Se déconnecter</a></li>
+      <li><a (click)="openDialog('150ms', '150ms', diagMessages.LOGOUT)"><i class="right material-icons">exit_to_app</i>Se déconnecter</a></li>
     </ul>
   </div>
 </nav>

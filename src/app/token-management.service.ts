@@ -17,8 +17,6 @@ export class TokenManagementService implements HttpInterceptor {
 
 
     if(token) {
-      console.log(token);
-      
       request = request.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`

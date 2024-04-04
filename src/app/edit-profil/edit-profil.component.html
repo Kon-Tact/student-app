@@ -7,28 +7,44 @@
   
         <!-- Champ username -->
         <div class="form-group">
-          <label for="name">username</label>
+          <label for="name">Identifiant</label>
+          <a *ngIf="validator.visibleDefaultUsername" (click)="backToSnap('username')"><i class="waves-effect right material-icons">autorenew</i></a>
           <input type="text" formControlName="username" id="username"
+                  (ngModelChange)="checkDifferences($event, 'username')"
                   required
                   name="username"
                   placeholder="Ex. henrycavill">
+                  
         </div>
 
         <!-- Champ mot de passe -->
         <div class="form-group">
           <label for="password">Mot de passe</label>
-          <input type="text" formControlName="password" id="password"
-                required
+          <a *ngIf="validator.visibleDefaultPassword" (click)="backToSnap('password')"><i class="waves-effect right material-icons">autorenew</i></a>
+          <input type="password" formControlName="password" id="password"
+                (ngModelChange)="checkDifferences($event, 'password')"
                 name="password"
                 placeholder="Ex. **********">
+                
         </div>
   
         <!-- Champ email -->
         <div class="form-group">
-          <label for="hp">E-mail</label>
+          <label for="email">E-mail</label>
+          <a *ngIf="validator.visibleDefaultEmail" (click)="backToSnap('email')"><i class="waves-effect right material-icons">autorenew</i></a>
           <input type="email" formControlName="email" id="email"
+                  (ngModelChange)="checkDifferences($event, 'email')"
                   required
                   placeholder="Ex. henry.cavil@example.com">
+                  
+        </div>
+
+        <!-- Champ role -->
+        <div *ngIf="isOtherAccount" class="form-group">
+          <label for="roleB">Role</label>
+          <a *ngIf="validator.visibleDefaultRoleB" (click)="backToSnap('roleB')"><i class="waves-effect right material-icons">autorenew</i></a>
+          <mat-checkbox formControlName="roleB" id="roleB" (ngModelChange)="checkDifferences($event, 'roleB')">
+          </mat-checkbox>
         </div>
   
         <!-- Buttons -->
@@ -44,7 +60,7 @@
           <button 
             type="submit"
             class="waves-effect waves-light btn"
-            [disabled]="editAccountForm.invalid">
+            [disabled]="!validator.buttonState">
             Mettre a jour le compte
           </button>
         </div>
@@ -60,3 +76,8 @@
   class="waves-effect waves-light btn"> 
   Remplissage de test
 </button>-->
+
+<!-- editAccountForm.pristine || -->
+<!-- *ngIf="isDefault('AccountUsername')" -->
+<!-- *ngIf="isDefault('AccountPassword')" -->
+<!-- *ngIf="isDefault('AccountEmail')" -->

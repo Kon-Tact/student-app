@@ -26,6 +26,10 @@ export class GotoService {
     this.router.navigateByUrl('/login');
   }
 
+  goToAccountList() {
+    this.router.navigateByUrl('/accounts')
+  }
+
   goToEdit() {
     this.router.navigateByUrl('/edit');
   }

@@ -1,9 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { DataAccessService } from '../data-access.service';
 import { ApiAccessService } from '../api-access.service';
-import { Router } from '@angular/router';
-import { account } from '../account';
 import { NotificationsService } from '../notifications.service';
 import { GotoService } from '../goto.service';
 import { ConnectionService } from '../connection.service';
@@ -45,11 +42,13 @@ export class RegisterConnexionComponent implements OnInit{
   }
   
   onSubmit() {
-    const newAccount = this.accountForm.value
-    this.api.saveAccount(newAccount).subscribe((account) => {
-      this.notif.showSuccess("Le compte a bien été enregistré dans la base");
+    let newAccount = this.accountForm.value
+    this.api.saveAccount(newAccount).subscribe((response) => {
+      this.api.setAuthToken(response.token);
+      newAccount = response.account;
       this.connect.connectAccount(newAccount);
-      this.goto.goToHomePage();  
+      this.goto.goToHomePage();
+      this.notif.showSuccess('Authentification réussie sous le compte ' + newAccount.username);
     })
   }  
 }

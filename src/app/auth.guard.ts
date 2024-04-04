@@ -1,16 +1,14 @@
 import { CanActivateFn } from '@angular/router';
-import { ConnectionService } from './connection.service';
 import { GotoService } from './goto.service';
 
-export function createAuthGuard(connectServ: ConnectionService, goto: GotoService): CanActivateFn {
-  return (route, state) => {
+export function createAuthGuard(goto: GotoService): CanActivateFn {
+  return (route) => {
     const path = route.routeConfig ? route.routeConfig.path : '';
   
-    if (path === 'students' || path === 'signin' || path === 'edit') {
-      const isAuthenticated = connectServ.retrieveAccount() ? true : false;
+    if (path === 'students' || path === 'signin' || path === 'edit' || path === 'accounts') {
+      const isAuthenticated = localStorage.getItem("connectedAccount") ? true : false;
   
       if (!isAuthenticated) {
-        console.log("User is not authenticated");
         goto.goToLoginPage();
         return false;
       }

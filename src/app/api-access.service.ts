@@ -1,17 +1,10 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, catchError, of, tap } from 'rxjs';
+import { Observable, catchError, of, tap, throwError } from 'rxjs';
 import { student } from './student';
 import { account } from './account';
-import { ConnectionService } from './connection.service';
-import { GotoService } from './goto.service';
-
-interface TokenResponse {
-  token: string;
-  role: string;
-  email: string;
-  id: string;
-}
+import { accountResponse } from './accountResponse';
+import { NotificationsService } from './notifications.service';
 
 interface RoleResponse {
   role: string;
@@ -32,15 +25,12 @@ export class ApiAccessService {
 
   constructor(
     private http: HttpClient,
-    private connect: ConnectionService,
-    private goto: GotoService
+    private notif: NotificationsService
   ) {}
 
   //Never used
   getStudent(studentId: number): Observable<student> {
     const studUrl = this.urlStudentApi + "/student/" + studentId;
-    console.log(studUrl);
-    console.log("Niveau d'autorisation : User");
     
     return this.http.get<student>(studUrl).pipe(
       tap((student: student) => console.table(student)),
@@ -53,8 +43,6 @@ export class ApiAccessService {
 
   getStudentList(): Observable<student[]> {
     const listUrl = this.urlStudentApi + "/student/list";
-    console.log(listUrl);
-    console.log("Niveau d'autorisation : Tout le monde");
     
     return this.http.get<student[]>(listUrl).pipe(
       tap((studentList: student[]) => this.log(studentList)),
@@ -67,8 +55,6 @@ export class ApiAccessService {
   
   saveStudent(student: student): Observable<student> {
     const saveUrl = this.urlStudentApi + "/student/save";
-    console.log(saveUrl);
-    console.log("Niveau d'autorisation : User");
      
     return this.http.post<student>(saveUrl, student, {'headers': this.httpOptions}).pipe(
       tap((student) => this.log(student)),
@@ -81,8 +67,6 @@ export class ApiAccessService {
 
   clearBase(): Observable<null> {
     const clearUrl = this.urlStudentApi + "/student/clear";
-    console.log(clearUrl);
-    console.log("Niveau d'autorisation : Admin");
     
     return this.http.delete<null>(clearUrl).pipe(
       tap(() => this.log("Success")),
@@ -95,9 +79,6 @@ export class ApiAccessService {
 
   editStudent(student: student): Observable<student> {
     const editUrl = this.urlStudentApi + "/student/edit";
-    console.log(editUrl);
-    console.table(student);
-    console.log("Niveau d'autorisation : User");
     
     return this.http.put<student>(editUrl, student, {'headers': this.httpOptions}).pipe(
       tap((student) => this.log(student)),
@@ -110,8 +91,6 @@ export class ApiAccessService {
 
   deleteStudent(student: student): Observable<null> {
     const delUrl = `${this.urlStudentApi}/student/delete?id=${student.id}`;
-    console.log(delUrl);
-    console.log("Niveau d'autorisation : Admin");
     
     return this.http.delete<null>(delUrl).pipe(
       tap((response) => this.log(response)),
@@ -128,8 +107,6 @@ export class ApiAccessService {
   //Never used
   getRole(username: string): Observable<RoleResponse> {
     const accountUrl = this.urlStudentApi + "/account/role";
-    console.log(accountUrl);
-    console.log("Niveau d'autorisation : User");
     
     return this.http.post<RoleResponse>(accountUrl, username, {'headers': this.httpOptions}).pipe(
       tap((role: RoleResponse) => console.table(role.role)),
@@ -143,8 +120,6 @@ export class ApiAccessService {
   //Never used
   getAccountList(): Observable<account[]> {
     const accListUrl = this.urlStudentApi + "/account/list";
-    console.log(accListUrl);
-    console.log("Niveau d'autorisation : Admin");
     
     return this.http.get<account[]>(accListUrl).pipe(
       tap((accountList: account[]) => this.log(accountList)),
@@ -155,13 +130,10 @@ export class ApiAccessService {
     );
   }
   
-  saveAccount(account: account): Observable<account> {
-    const saveUrl = this.urlStudentApi + "/account/save"; 
-    console.log(saveUrl);
-    console.table(account);
-    console.log("Niveau d'autorisation : Tout le monde");
+  saveAccount(account: account): Observable<accountResponse> {
+    const saveUrl = this.urlStudentApi + "/account/save";
 
-    return this.http.post<account>(saveUrl, account, {'headers': this.httpOptions}).pipe(
+    return this.http.post<accountResponse>(saveUrl, account, {'headers': this.httpOptions}).pipe(
       tap((account) => this.log(account)),
       catchError((error) => {
         console.error(error);
@@ -173,8 +145,6 @@ export class ApiAccessService {
   //Never used
   deleteAllAccount(): Observable<null> {
     const clearUrl = this.urlStudentApi + "/account/clear";
-    console.log(clearUrl);
-    console.log("Niveau d'autorisation : Admin");
     
     return this.http.delete<null>(clearUrl).pipe(
       tap(() => this.log("Success")),
@@ -187,9 +157,6 @@ export class ApiAccessService {
 
   editAccount(account: account): Observable<account> {
     const editUrl = this.urlStudentApi + "/account/edit";
-    console.log(editUrl);
-    console.table(account);
-    console.log("Niveau d'autorisation : User");
     
     return this.http.put<account>(editUrl, account, {'headers': this.httpOptions}).pipe(
       tap((account) => this.log(account)),
@@ -203,8 +170,6 @@ export class ApiAccessService {
   //Never used
   deleteAccountById(account: account): Observable<null> {
     const delUrl = `${this.urlStudentApi}/account/delete?id=${account.id}`;
-    console.log(delUrl);
-    console.log("Niveau d'autorisation : Admin");
     
     return this.http.delete<null>(delUrl).pipe(
       tap((response) => this.log(response)),
@@ -215,16 +180,13 @@ export class ApiAccessService {
     )
   }
 
-  login(account: account): Observable<TokenResponse> {
+  login(account: account): Observable<accountResponse> {
     const loginUrl = `${this.urlStudentApi}/account/login`;
-    console.log(loginUrl);
-    console.table(account);
-    console.log("Niveau d'autorisation : Tout le monde");
     
-    return this.http.post<TokenResponse>(loginUrl, account, {'headers': this.httpOptions}).pipe(
-      tap((response) => console.table(response)),
+    return this.http.post<accountResponse>(loginUrl, account, {'headers': this.httpOptions}).pipe(
       catchError((error) => {
         console.error(error);
+        this.notif.showSuccess("L'identifiant ou le mot de passe n'ont pas étés reconnus");
         return of();
       })
     )  
@@ -240,8 +202,6 @@ export class ApiAccessService {
 
   logout(): Observable<null> {
     const logoutUrl = `${this.urlStudentApi}/account/logout`;
-    console.log(logoutUrl);
-    console.log("Niveau d'autorisation : Tout le monde");
     
     return  this.http.post<null>(logoutUrl, {'headers': this.httpOptions}).pipe(
       tap((response) => this.log(response)),
@@ -252,8 +212,19 @@ export class ApiAccessService {
     )
   }
 
+  changeRole(idRole: string[]): Observable<string> {
+    const changeRoleUrl = `${this.urlStudentApi}/account/role`;
+    
+    return this.http.post<string>(changeRoleUrl, idRole, {'headers': this.httpOptions}).pipe(
+      tap((response) => this.log(response)),
+      catchError((error) => {
+        console.error(error);
+        this.notif.showSuccess("Il y a eu un problème lors de la modification du role");
+        return of();
+      })
+    )
+  }
+
   private log(response: any) {
-    //console.log("Notification de réussite du service ApiAccess :");
-    //console.table(response)
   }
 }

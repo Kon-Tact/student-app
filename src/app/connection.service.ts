@@ -8,37 +8,33 @@ export class ConnectionService {
 
   constructor() { }
 
-  private account: account | null;
+  public connectedAccount: account | null;
   private authAdmin: boolean = false;
   private authSuperAdmin: boolean = false;
-  
+  public isConnectedAccountPresent: string = "isConnectedAccountPresent";
 
-  connectAccount(account: account) {
-    this.account = account;
-    this.locallyStoring(account);
-    account.role == "ADMIN" ? this.authAdmin = true : null;
-    if (account.role == "SUPER_ADMIN") {
-      this.authSuperAdmin = true;
-      this.authAdmin = true;
-    }
-    console.log(this.account);   
+  connectAccount(acc: account) {
+    this.connectedAccount = new account(acc.username, '', acc.email, acc.role);
+    this.connectedAccount.id = acc.id;
+    this.locallyStoring();
+    this.roleManagement();
   }
 
-  retrieveAccount(): account | null{
-    console.log(this.account);
-    if (!this.account && localStorage.length > 0) {
-      this.locallyRetrieve();
+  retrieveAccount() {
+    if (localStorage.getItem('connectedAccount')) {
+      this.connectedAccount = JSON.parse(localStorage.getItem('connectedAccount')!)
+      this.roleManagement();
     }
-    return this.account;
+  }
+
+  roleManagement() {
+    this.authSuperAdmin = this.connectedAccount?.role === "SUPER_ADMIN" ? true : false;
+    this.authAdmin = this.connectedAccount?.role.includes("ADMIN") ? true : false;
   }
 
 
   isAdmin(): boolean {
     return this.authAdmin;
-  }
-
-  setSuperAdmin() {
-    this.authSuperAdmin = true;
   }
 
   isSuperAdmin(): boolean{
@@ -48,29 +44,15 @@ export class ConnectionService {
   logout() {
     this.authAdmin = false;
     this.authSuperAdmin = false;
-    this.account = null;
     localStorage.clear();
   }
 
-  locallyStoring(account: account)  {
-    localStorage.setItem('id', account.id.toString());
-    localStorage.setItem('username', account.username);
-    localStorage.setItem('password', account.password);
-    localStorage.setItem('email', account.email);
-    localStorage.setItem('role', account.role);
+  locallyStoring()  {
+    localStorage.setItem('connectedAccount', JSON.stringify(this.connectedAccount));
   }
 
-  locallyRetrieve() {
-    console.log("in locally retrieve");
-    
-    let localAccount: account = new account();
-
-    localAccount.id = localStorage.getItem('id')!;
-    localAccount.username = localStorage.getItem('username')!;
-    localAccount.password = localStorage.getItem('password')!;
-    localAccount.email = localStorage.getItem('email')!;
-    localAccount.role = localStorage.getItem('role')!;
-    
-    this.account = localAccount;
+  editConnected() {
+    localStorage.setItem('connectedSnapped', JSON.stringify(this.connectedAccount));
+    localStorage.setItem('connectedTemp', JSON.stringify(this.connectedAccount));
   }
 }

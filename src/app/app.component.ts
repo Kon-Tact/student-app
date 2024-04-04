@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiAccessService } from './api-access.service';
-import { NavigationEnd, OnSameUrlNavigation, Router } from '@angular/router';
-import { Location } from '@angular/common';
+import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { DataAccessService } from './data-access.service';
 import { account } from './account';
 import { GotoService } from './goto.service';
-import { Subscription } from 'rxjs';
 import { ConnectionService } from './connection.service';
 import { DialogComponent } from './table/dialog.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -19,7 +17,6 @@ import { diagMessages } from './dialogCases';
 export class AppComponent implements OnInit{
 
   connectedAccount: account | null = null;
-  isAdmin: boolean = false;
 
   constructor(
     private api: ApiAccessService,
@@ -28,20 +25,31 @@ export class AppComponent implements OnInit{
     private goto: GotoService,
     private router: Router,  
     private dialog: MatDialog,
-  ){}
+  ){
+    this.router.events.subscribe(event => {
+      if(event instanceof NavigationStart) {
+        const fromUrl = this.router.url;
+        if(fromUrl === '/edit') {
+          this.dataServ.removeLocalExceptConnected();
+        }
+        if(fromUrl === '/register') {
+          this.dataServ.removeLocalExceptConnected();
+        }
+      }
+    })
+  }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.updateNav();
   }
 
   updateNav() {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
-        console.log("To the home page");
-        this.connectedAccount = this.connect.retrieveAccount();
-        this.connectedAccount ? this.isAdmin = this.connect.isAdmin() : null;    
+        this.connect.retrieveAccount();
+        this.connectedAccount = this.connect.connectedAccount;    
       }
-    })
+    });
   }
   
   studentRegistration(){
@@ -57,7 +65,9 @@ export class AppComponent implements OnInit{
   }
 
   edit() {
+    this.connect.editConnected();
     this.goto.goToEdit();
+    this.forcePageRefreshIfSameURL();
   }
 
   toList() {
@@ -66,6 +76,20 @@ export class AppComponent implements OnInit{
 
   public get diagMessages() {
     return diagMessages;
+  }
+
+  toAccounts() {
+    this.goto.goToAccountList();
+  }
+
+  clearPossible(): boolean {
+    if(this.connectedAccount?.role.includes("ADMIN")) {
+      if(localStorage.getItem("isStudentStocked")) {
+        return false;
+      }
+      return true
+    }
+    return false;
   }
 
   openDialog(enterAnimationDuration: string, exitAnimationDuration: string, cases: diagMessages) {
@@ -77,25 +101,24 @@ export class AppComponent implements OnInit{
     })
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
+      if (result && diagMessages.LOGOUT) {
         this.api.logout().subscribe(() => {
-          this.goto.goToLoginPage();
-          localStorage.removeItem('auth-token');
           this.connect.logout();
+          location.reload();
         });
+      } else if (result && diagMessages.CLEAR) {
+        if(localStorage.getItem(""))
+        this.api.clearBase().subscribe(() => {
+          location.reload();
+        });  
       }
     });
   }
-  
-  logout() {
-  }
 
-  clearBase() {
-    if(window.confirm('Êtes vous sûr(e) de vouloir complètement vider la base de donnée ? \nCette action est irréversible')) {
-      this.api.clearBase().subscribe(() => {
-        console.log("Base cleared");
-        location.reload();
-      });  
+  forcePageRefreshIfSameURL() {
+    const currentURL = window.location.href;
+    if (currentURL === "http://localhost:4200/edit") {
+      location.reload();
     }
   }
 }

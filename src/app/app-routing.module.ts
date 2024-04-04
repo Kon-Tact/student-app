@@ -8,10 +8,12 @@ import { EditProfilComponent } from './edit-profil/edit-profil.component';
 import { ConnectionService } from './connection.service';
 import { createAuthGuard } from './auth.guard';
 import { GotoService } from './goto.service';
+import { AccountListComponent } from './account-list/account-list.component';
 
 const routes: Routes = [
   {path: 'register', component: RegisterConnexionComponent},
   {path: 'students', component: TableComponent, canActivate: ['AuthGuard']},
+  {path: 'accounts', component: AccountListComponent, canActivate: ['AuthGuard']},
   {path: 'login', component: LoginPageComponent},
   {path: 'edit', component: EditProfilComponent, canActivate: ['AuthGuard']},
   {path: 'signin', component: SigninComponent, canActivate: ['AuthGuard']},
@@ -26,7 +28,7 @@ const routes: Routes = [
     ConnectionService,
     {
       provide: 'AuthGuard',
-      useFactory: (connectServ: ConnectionService, goto: GotoService) => createAuthGuard(connectServ, goto),
+      useFactory: (connectServ: ConnectionService, goto: GotoService) => createAuthGuard(goto),
       deps:[ConnectionService, GotoService]
     }
     

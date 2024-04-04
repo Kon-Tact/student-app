@@ -17,8 +17,10 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { EditProfilComponent } from './edit-profil/edit-profil.component';
 import { LoginPageComponent } from './login-page/login-page.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { DialogComponent } from './table/dialog.component';
 import { TokenManagementService } from './token-management.service';
+import { AccountListComponent } from './account-list/account-list.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +31,7 @@ import { TokenManagementService } from './token-management.service';
     EditProfilComponent,
     LoginPageComponent,
     DialogComponent,
+    AccountListComponent,
     
   ],
   imports: [
@@ -37,6 +40,7 @@ import { TokenManagementService } from './token-management.service';
     HttpClientModule,
     MatTableModule,
     MatFormFieldModule,
+    MatCheckboxModule,
     MatDialogModule,
     MatButtonModule,
     MatSnackBarModule,
