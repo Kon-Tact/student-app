@@ -19,7 +19,9 @@ export class SigninComponent implements OnInit{
 
   studentForm: FormGroup;
   inEditStudent : student | null;
+  inRegistrationStudent: student | null;
   snappedStudent: student;
+  isEdit: boolean = false;
   btnText: string;
   validator: studentValidator;
 
@@ -39,14 +41,17 @@ export class SigninComponent implements OnInit{
 
   editOrRegister() {
     if(localStorage.getItem("editStudent")) {
+      this.isEdit = true;
       this.btnText = 'Mise à jour';
       this.inEditStudent = JSON.parse(localStorage.getItem("editStudent")!);
-      this.snappedStudent = JSON.parse(localStorage.getItem("snappedEditStudent")!)
-      this.validator = localStorage.getItem("listVal") ? this.validatorManagement() : new studentValidator(false, false, false, false);
       this.fillForms(this.inEditStudent!);
     } else {
       this.btnText = 'Enregistrer';
+      this.inRegistrationStudent = JSON.parse(localStorage.getItem("newStudent")!);
     }
+    this.snappedStudent = JSON.parse(localStorage.getItem("snappedStudent")!);
+    this.validator = localStorage.getItem("listVal") ? this.validatorManagement() : new studentValidator(false, false, false, false);
+    this.isEdit ? this.fillForms(this.inEditStudent!) : this.fillForms(this.inRegistrationStudent!);
   }
 
   validatorManagement(): studentValidator {
@@ -75,9 +80,7 @@ export class SigninComponent implements OnInit{
   }
 
   backToList() {
-    if(this.inEditStudent){
-      this.dataServ.removeLocalExceptConnected();
-    }
+    this.dataServ.removeLocalExceptConnected();
     this.goto.goToHomePage();
   }
 
@@ -99,11 +102,15 @@ export class SigninComponent implements OnInit{
   }
 
   checkDifferences(newvalue: string, field: keyof student) {
-    (this.inEditStudent as any)[field] = newvalue;
-    if (this.snappedStudent[field] === this.inEditStudent![field]) {
-      (this.validator[field + "Changed" as keyof studentValidator] as boolean) = false;
+    if(this.isEdit) {
+      (this.inEditStudent as any)[field] = newvalue
+      if (this.snappedStudent[field] === this.inEditStudent![field]) {
+        (this.validator[field + "Changed" as keyof studentValidator] as boolean) = false;
+      } else {
+        (this.validator[field + "Changed" as keyof studentValidator] as boolean) = true;
+      }
     } else {
-      (this.validator[field + "Changed" as keyof studentValidator] as boolean) = true;
+      (this.inRegistrationStudent as any)[field] = newvalue;
     }
   }
 
@@ -114,7 +121,7 @@ export class SigninComponent implements OnInit{
   @HostListener('window:beforeunload')
   onBeforeUnload() {
     localStorage.setItem('listVal', `${this.validator.nameChanged},${this.validator.phoneNumberChanged},${this.validator.emailChanged},${this.validator.addressChanged}`);
-    this.inEditStudent ? localStorage.setItem('editStudent', JSON.stringify(this.inEditStudent)) : null;
+    this.inEditStudent ? localStorage.setItem('editStudent', JSON.stringify(this.inEditStudent)) : localStorage.setItem('newStudent', JSON.stringify(this.inRegistrationStudent));
   }
     
   generateTestValue() {

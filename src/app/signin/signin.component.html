@@ -40,7 +40,7 @@
         <!-- Champ adresse -->
         <div class="form-group">
           <label for="cp">Adresse</label>
-          <a *ngIf="validator.visibleDefaultEmail" (click)="backToSnap('address')"><i class="waves-effect right material-icons">autorenew</i></a>
+          <a *ngIf="validator.visibleDefaultAddress" (click)="backToSnap('address')"><i class="waves-effect right material-icons">autorenew</i></a>
           <input type="text" formControlName="address" id="address"
                   (ngModelChange)="checkDifferences($event, 'address')"
                   required
@@ -59,10 +59,18 @@
             Retour
           </button>
           <button 
+            *ngIf="isEdit"
             type="submit"
             class="waves-effect waves-light btn"
             [disabled]="!validator.buttonState">
-            {{btnText}}
+            Mise à jour
+          </button>
+          <button 
+            *ngIf="!isEdit"
+            type="submit"
+            class="waves-effect waves-light btn"
+            [disabled]="!studentForm.valid">
+            Enregistrer
           </button>
 
           <button 

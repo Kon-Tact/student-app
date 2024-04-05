@@ -12,8 +12,6 @@ export class DataAccessService {
   constructor() { }
 
   private json_url: RequestInfo = './assets/firstnames.json';
-  private isStudentStocked:string = "isStudentStocked";
-  private isAccountStocked:string = "isAccountStocked";
   localStorageData: { key: string, value: string }[] = [];
 
   getRandoDatas(): Observable<student> {
@@ -47,14 +45,20 @@ export class DataAccessService {
 
   saveStudentToUpdate(student: student) {
     localStorage.setItem("editStudent", JSON.stringify(student));
-    localStorage.setItem("snappedEditStudent", JSON.stringify(student));
+    localStorage.setItem("snappedStudent", JSON.stringify(student));
   }
 
-  saveAccountToUpdate(account: account) {
-    account.password = '';
-    account.roleB = account.role.includes("ADMIN") ? true : false;
-    localStorage.setItem('editAccount', JSON.stringify(account));
-    localStorage.setItem('snappedEditAccount', JSON.stringify(account));
+  createEmpty() {
+    const newStudent = student.empty();
+    localStorage.setItem("newStudent", JSON.stringify(newStudent));
+    localStorage.setItem("snappedStudent", JSON.stringify(newStudent));
+  }
+
+  saveAccountToUpdate(accountToUpdate: account) {
+    let accountToLocal = new account(accountToUpdate.username, '', accountToUpdate.email, accountToUpdate.role);
+    accountToLocal.id = accountToUpdate.id;
+    localStorage.setItem('editAccount', JSON.stringify(accountToLocal));
+    localStorage.setItem('snappedEditAccount', JSON.stringify(accountToLocal));
   }
 
   //Test purpose method
@@ -73,13 +77,11 @@ export class DataAccessService {
   }
 
   removeLocalExceptConnected() {
-    const keysToKeep = ["auth-token", "connectedAccount"];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (!keysToKeep.includes(key!)) {
-        localStorage.removeItem(key!);
-      }
-    }
+    const tempConnected: account = JSON.parse(localStorage.getItem("connectedAccount")!);
+    const tempToken: string = localStorage.getItem("auth-token")!;
+    localStorage.clear();
+    localStorage.setItem("auth-token", tempToken);
+    localStorage.setItem("connectedAccount", JSON.stringify(tempConnected));
     this.displayLocalStorageData();
   }
 

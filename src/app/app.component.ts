@@ -53,6 +53,7 @@ export class AppComponent implements OnInit{
   }
   
   studentRegistration(){
+    this.dataServ.createEmpty();
     this.goto.goToStudentRegistration();
   }
 
@@ -65,6 +66,7 @@ export class AppComponent implements OnInit{
   }
 
   edit() {
+    this.dataServ.removeLocalExceptConnected();
     this.connect.editConnected();
     this.goto.goToEdit();
     this.forcePageRefreshIfSameURL();

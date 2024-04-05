@@ -43,7 +43,7 @@ export class EditProfilComponent implements OnInit {
     this.initForm();
     this.snappedAccount = localStorage.getItem("snappedEditAccount") ? JSON.parse(localStorage.getItem("snappedEditAccount")!) : JSON.parse(localStorage.getItem("connectedSnapped")!);
     this.validator = localStorage.getItem("listVal") ? this.validatorManagement() : new accountValidator(false, false, false, false);
-    this.isOtherAccount = localStorage.getItem("editAccount") ? true : false;
+    this.isOtherAccount = localStorage.getItem("connectedTemp") ? false : true;
     this.inEditAccount = this.isOtherAccount ? JSON.parse(localStorage.getItem("editAccount")!) : JSON.parse(localStorage.getItem("connectedTemp")!);
     this.fillForm(this.inEditAccount!);
   }
