@@ -167,7 +167,6 @@ export class ApiAccessService {
     ) 
   }
 
-  //Never used
   deleteAccountById(account: account): Observable<null> {
     const delUrl = `${this.urlStudentApi}/account/delete?id=${account.id}`;
     

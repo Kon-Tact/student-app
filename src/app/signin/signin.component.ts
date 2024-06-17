@@ -15,10 +15,10 @@ import { studentValidator } from '../studentValidator';
   }`
 })
 
-export class SigninComponent implements OnInit{
+export class SigninComponent implements OnInit {
 
   studentForm: FormGroup;
-  inEditStudent : student | null;
+  inEditStudent: student | null;
   inRegistrationStudent: student | null;
   snappedStudent: student;
   isEdit: boolean = false;
@@ -29,9 +29,9 @@ export class SigninComponent implements OnInit{
     private api: ApiAccessService,
     private fb: FormBuilder,
     private goto: GotoService,
-    private dataServ : DataAccessService,
+    private dataServ: DataAccessService,
     private notif: NotificationsService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initForm();
@@ -40,7 +40,7 @@ export class SigninComponent implements OnInit{
   }
 
   editOrRegister() {
-    if(localStorage.getItem("editStudent")) {
+    if (localStorage.getItem("editStudent")) {
       this.isEdit = true;
       this.btnText = 'Mise à jour';
       this.inEditStudent = JSON.parse(localStorage.getItem("editStudent")!);
@@ -61,7 +61,7 @@ export class SigninComponent implements OnInit{
 
   initForm(): void {
     this.studentForm = this.fb.group({
-      name: [''], 
+      name: [''],
       phoneNumber: [''],
       email: [''],
       address: ['']
@@ -85,8 +85,8 @@ export class SigninComponent implements OnInit{
   }
 
   onSubmit() {
-    if(!this.inEditStudent) {
-        this.api.saveStudent(this.studentForm.value).subscribe((student) => {
+    if (!this.inEditStudent) {
+      this.api.saveStudent(this.studentForm.value).subscribe((student) => {
         this.notif.showSuccess('L\'étudiant(e) a bien été enregistré sur la base de donnée');
         this.goto.goToHomePage();
       })
@@ -102,7 +102,7 @@ export class SigninComponent implements OnInit{
   }
 
   checkDifferences(newvalue: string, field: keyof student) {
-    if(this.isEdit) {
+    if (this.isEdit) {
       (this.inEditStudent as any)[field] = newvalue
       if (this.snappedStudent[field] === this.inEditStudent![field]) {
         (this.validator[field + "Changed" as keyof studentValidator] as boolean) = false;
@@ -115,7 +115,7 @@ export class SigninComponent implements OnInit{
   }
 
   backToSnap(field: keyof student) {
-    this.studentForm.patchValue({[field]: this.snappedStudent[field]});
+    this.studentForm.patchValue({ [field]: this.snappedStudent[field] });
   }
 
   @HostListener('window:beforeunload')
@@ -123,7 +123,7 @@ export class SigninComponent implements OnInit{
     localStorage.setItem('listVal', `${this.validator.nameChanged},${this.validator.phoneNumberChanged},${this.validator.emailChanged},${this.validator.addressChanged}`);
     this.inEditStudent ? localStorage.setItem('editStudent', JSON.stringify(this.inEditStudent)) : localStorage.setItem('newStudent', JSON.stringify(this.inRegistrationStudent));
   }
-    
+
   generateTestValue() {
     let randoPN: string = ("06" + Math.floor(Math.random() * 10000000));
     if (randoPN.length != 10) { randoPN = randoPN + Math.floor(Math.random() * 10); }
@@ -132,7 +132,7 @@ export class SigninComponent implements OnInit{
       randStud.email = randStud.name.toLowerCase().replace(/\s/g, '') + "@email.com";
       randStud.phoneNumber = randoPN
       randStud.address = String(Math.floor(Math.random() * 30) + 1) + " " + randStud.address;
-      this.fillForms(randStud);  
+      this.fillForms(randStud);
     });
   }
 }
